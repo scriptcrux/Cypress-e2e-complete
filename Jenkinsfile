@@ -68,7 +68,7 @@ pipeline {
 
     post {
        always {
-        node('master') {  // Run on the built-in node
+        node('built-in') {  // Run on the built-in node
             sh 'rm -rf cypress/videos cypress/screenshots .cache/Cypress'
             cleanWs()
         }
