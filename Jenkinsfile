@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        docker { image 'node:18' }  // Use Node.js 18 image
-    }
+    agent any
 
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'stg'], description: 'Select environment to run tests')
@@ -19,8 +17,9 @@ pipeline {
         stage('Setup') {
             steps {
                 script {
-                    sh 'node -v'
-                    sh 'npm -v'
+                    sh 'docker --version'  // ✅ This will verify if Docker is available
+                    sh 'docker pull node:18'
+                    sh 'docker run --rm -v $(pwd):/app -w /app node:18 npm ci'
                     sh 'npm ci'
                 }
             }
