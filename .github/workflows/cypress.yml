@@ -1,0 +1,88 @@
+name: Cypress E2E Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to run tests'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - qa
+        - stg
+      browser:
+        description: 'Browser for testing'
+        required: true
+        default: 'chrome'
+        type: choice
+        options:
+        - chrome
+        - firefox
+        - edge
+      test_suite:
+        description: 'Test suite to run'
+        required: false
+        default: 'all'
+        type: string
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [dev, qa, stg]
+        browser: [chrome, firefox, edge]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Cypress run
+      uses: cypress-io/github-action@v6
+      with:
+        browser: ${{ matrix.browser }}
+        config-file: cypress/config/${{ matrix.environment }}.config.ts
+        env: CYPRESS_TEST_SUITE=${{ github.event.inputs.test_suite || 'all' }}
+
+    - name: Upload Cypress videos
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: cypress-videos-${{ matrix.environment }}-${{ matrix.browser }}
+        path: cypress/videos
+        retention-days: 30
+
+    - name: Upload Cypress screenshots
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: cypress-screenshots-${{ matrix.environment }}-${{ matrix.browser }}
+        path: cypress/screenshots
+        retention-days: 30
+
+    - name: Generate test report
+      if: always()
+      run: npx mochawesome-merge cypress/reports/*.json > cypress/reports/full_report.json
+
+    - name: Upload test report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-report-${{ matrix.environment }}-${{ matrix.browser }}
+        path: cypress/reports
+        retention-days: 30

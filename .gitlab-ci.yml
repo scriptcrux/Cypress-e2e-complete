@@ -1,0 +1,93 @@
+image: node:18
+
+variables:
+  CYPRESS_CACHE_FOLDER: ".cache/Cypress"
+  NODE_OPTIONS: "--max-old-space-size=4096"
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .cache/Cypress
+    - node_modules/
+
+stages:
+  - setup
+  - test
+
+install_dependencies:
+  stage: setup
+  script:
+    - npm ci
+  artifacts:
+    paths:
+      - node_modules
+
+.test_template: &test_definition
+  stage: test
+  script:
+    - npm run cypress:$ENVIRONMENT:$BROWSER -- --env CYPRESS_TEST_SUITE=${CYPRESS_TEST_SUITE:-all}
+  artifacts:
+    when: always
+    paths:
+      - cypress/videos/**/*.mp4
+      - cypress/screenshots/**/*.png
+    reports:
+      junit: results/cypress-*.xml
+  allow_failure: true
+
+# Dev Environment Tests
+test:dev:chrome:
+  <<: *test_definition
+  variables:
+    ENVIRONMENT: dev
+    BROWSER: chrome
+
+test:dev:firefox:
+  <<: *test_definition
+  variables:
+    ENVIRONMENT: dev
+    BROWSER: firefox
+
+test:dev:edge:
+  <<: *test_definition
+  variables:
+    ENVIRONMENT: dev
+    BROWSER: edge
+
+# QA Environment Tests
+test:qa:chrome:
+  <<: *test_definition
+  variables:
+    ENVIRONMENT: qa
+    BROWSER: chrome
+
+test:qa:firefox:
+  <<: *test_definition
+  variables:
+    ENVIRONMENT: qa
+    BROWSER: firefox
+
+test:qa:edge:
+  <<: *test_definition
+  variables:
+    ENVIRONMENT: qa
+    BROWSER: edge
+
+# Staging Environment Tests
+test:stg:chrome:
+  <<: *test_definition
+  variables:
+    ENVIRONMENT: stg
+    BROWSER: chrome
+
+test:stg:firefox:
+  <<: *test_definition
+  variables:
+    ENVIRONMENT: stg
+    BROWSER: firefox
+
+test:stg:edge:
+  <<: *test_definition
+  variables:
+    ENVIRONMENT: stg
+    BROWSER: edge

@@ -15,5 +15,11 @@ describe('login test', () => {
       added env file for each environment
       added scripts for each environment
     */
+
+    //* 3 added jenkins file */
+
+    /* 4 added GH actions file */
+
+    /* 5 added gitlab CICD file */
   });
 });
