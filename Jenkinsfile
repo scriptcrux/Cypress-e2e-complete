@@ -68,9 +68,7 @@ pipeline {
 
     post {
         always {
-            node {
-                cleanWs()
-            }
+            cleanWs()
         }
         success {
             echo 'All tests completed successfully!'
