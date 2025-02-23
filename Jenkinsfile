@@ -68,8 +68,11 @@ pipeline {
 
     post {
         always {
+        node {  // Ensure it's inside a node block
             sh 'rm -rf cypress/videos cypress/screenshots .cache/Cypress'
+            cleanWs()
         }
+    }
         success {
             echo 'All tests completed successfully!'
         }
