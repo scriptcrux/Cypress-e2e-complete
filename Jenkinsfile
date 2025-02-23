@@ -68,7 +68,7 @@ pipeline {
 
     post {
         always {
-            cleanWs()
+            sh 'rm -rf cypress/videos cypress/screenshots .cache/Cypress'
         }
         success {
             echo 'All tests completed successfully!'
