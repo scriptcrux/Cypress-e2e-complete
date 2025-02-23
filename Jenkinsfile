@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'cypress/included:13.6.1'
+            args '-u root:root'
+        }
+    }
 
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'stg'], description: 'Select environment to run tests')
