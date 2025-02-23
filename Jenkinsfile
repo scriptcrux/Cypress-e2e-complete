@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        docker { image 'node:18' }  // Use Node.js 18 image
+    }
 
     parameters {
         choice(name: 'ENVIRONMENT', choices: ['dev', 'qa', 'stg'], description: 'Select environment to run tests')
@@ -13,9 +15,12 @@ pipeline {
     }
 
     stages {
+        
         stage('Setup') {
             steps {
                 script {
+                    sh 'node -v'
+                    sh 'npm -v'
                     sh 'npm ci'
                 }
             }
