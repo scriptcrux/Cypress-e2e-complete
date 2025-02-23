@@ -1,0 +1,4 @@
+{
+  "include": ["./node_modules/cypress", "cypress/**/*.js", "cypress/e2e/spec.login.cy.ts", "cypress/e2e/spec.cy.ts"],
+  "exclude": ["cypress/fixtures/*.json", "cypress/fixtures/*.csv"]
+}

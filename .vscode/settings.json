@@ -1,0 +1,9 @@
+{
+  "cSpell.words": ["dblclick", "fakerjs", "firstname", "lastname"],
+  "cSpell.ignorePaths": [
+    "cypress/fixtures/**",
+    "**/*.json",
+    "**/*.csv",
+    "package-lock.json"
+  ]
+}
