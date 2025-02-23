@@ -67,8 +67,8 @@ pipeline {
     }
 
     post {
-        always {
-        node {  // Ensure it's inside a node block
+       always {
+        node('master') {  // Run on the built-in node
             sh 'rm -rf cypress/videos cypress/screenshots .cache/Cypress'
             cleanWs()
         }
